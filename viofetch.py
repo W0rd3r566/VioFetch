@@ -38,6 +38,126 @@ LOGO = (
     "    VIOFETCH",
 )
 
+# ASCII logos are intentionally monochrome so VioFetch keeps its violet theme.
+# More distribution-specific variants can be added here without changing render().
+LOGOS: dict[str, tuple[str, ...]] = {
+    "android": (
+        r"       \\  |  /",
+        r"        \\ | /",
+        r"       .-\"\"\"-.",
+        r"      /  o o  \\",
+        r"     |    ^    |",
+        r"     |         |",
+        r"      \\_______/",
+        r"     /|  | |  |\\",
+        r"    /_|__|_|__|_\\",
+        r"       /_/ \\_\\",
+        r"       ANDROID",
+    ),
+    "cachyos": (
+        r"       /\\",
+        r"      /  \\",
+        r"     / /\\ \\",
+        r"    / /  \\ \\",
+        r"   /_/____\\_\\",
+        r"      CACHYOS",
+    ),
+    "arch": (
+        r"       /\\",
+        r"      /  \\",
+        r"     / /\\ \\",
+        r"    / ____ \\",
+        r"   /_/    \\_\\",
+        r"       ARCH",
+    ),
+    "ubuntu": (
+        r"       .-\"\"\"-.",
+        r"     .'  .-.  '.",
+        r"    /   (   )   \\",
+        r"   |  .-     -.  |",
+        r"    \\  '.___.'  /",
+        r"     '.       .'",
+        r"       '-...-'",
+        r"       UBUNTU",
+    ),
+    "debian": (
+        r"       .----.",
+        r"      /  .-. \\",
+        r"     |  /   \\ |",
+        r"      \\ \\_.-' /",
+        r"       '----'",
+        r"       DEBIAN",
+    ),
+    "fedora": (
+        r"       ______",
+        r"      / ____/",
+        r"     / /__",
+        r"    / ___/",
+        r"   / /",
+        r"  /_/",
+        r"  FEDORA",
+    ),
+    "manjaro": (
+        r"     |\\\\   | |",
+        r"     | \\\\  | |",
+        r"     |  \\\\ | |",
+        r"     | |\\\\\\| |",
+        r"     | | \\\\  |",
+        r"     | |  \\\\ |",
+        r"     MANJARO",
+    ),
+    "windows": (
+        r"      .------.",
+        r"      |\\  |  |",
+        r"      | \\ |  |",
+        r"      |-- +--|",
+        r"      |   \\  |",
+        r"      '------'",
+        r"      WINDOWS",
+    ),
+    "macos": (
+        r"        .--.",
+        r"       /.-. '----------.",
+        r"       \\'-' .--\"--\"--\"-",
+        r"        '--'",
+        r"        macOS",
+    ),
+    "linux": (
+        r"       .--.",
+        r"      |o_o |",
+        r"      |:_/ |",
+        r"     //   \\ \\",
+        r"    (|     | )",
+        r"   /'\\_   _/\\",
+        r"   \\___)=(___/",
+        r"        LINUX",
+    ),
+}
+
+
+def select_logo(info: Mapping[str, str]) -> tuple[str, ...]:
+    """Select an ASCII logo from the detected operating system name."""
+    os_name = info.get("OS", "").casefold()
+
+    # Order matters: CachyOS is Arch-based, so match it before generic Arch.
+    choices = (
+        ("android", ("android", "termux")),
+        ("cachyos", ("cachyos",)),
+        ("manjaro", ("manjaro",)),
+        ("ubuntu", ("ubuntu",)),
+        ("debian", ("debian",)),
+        ("fedora", ("fedora",)),
+        ("arch", ("arch linux", "endeavouros", "endeavour os")),
+        ("windows", ("windows",)),
+        ("macos", ("macos", "mac os", "darwin")),
+        ("linux", ("linux", "opensuse", "open suse", "alpine")),
+    )
+    for logo_name, markers in choices:
+        if any(marker in os_name for marker in markers):
+            return LOGOS[logo_name]
+    return LOGO
+
+
 
 def run_command(args: Sequence[str], timeout: float = 1.2) -> str | None:
     """Run a command safely; unavailable commands and timeouts are non-fatal."""
@@ -298,8 +418,9 @@ def render(info: Mapping[str, str], *, no_logo: bool = False, color: bool = True
     if no_logo:
         return "\n".join(lines)
 
-    logo_lines = [colorize(line, VIOLET, color) for line in LOGO]
-    width = max(len(line) for line in LOGO)
+    logo = select_logo(info)
+    logo_lines = [colorize(line, VIOLET, color) for line in logo]
+    width = max(len(line) for line in logo)
     height = max(len(logo_lines), len(lines))
     combined: list[str] = []
     for index in range(height):
@@ -307,7 +428,7 @@ def render(info: Mapping[str, str], *, no_logo: bool = False, color: bool = True
         line = lines[index] if index < len(lines) else ""
         # ANSI escape sequences have already been applied to the display copy,
         # so pad using the original logo width instead of len(logo).
-        padding = " " * max(2, width - (len(LOGO[index]) if index < len(LOGO) else 0) + 3)
+        padding = " " * max(2, width - (len(logo[index]) if index < len(logo) else 0) + 3)
         combined.append(logo + padding + line)
     return "\n".join(combined)
 
