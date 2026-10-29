@@ -2,6 +2,7 @@ import json
 import subprocess
 import sys
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -57,23 +58,56 @@ class FormatTests(unittest.TestCase):
 
     def test_android_logo_selected(self):
         logo = viofetch.select_logo({"OS": "Android 17 (API 37) / Termux"})
-        self.assertIn("ANDROID", logo[-1])
-        self.assertNotIn("VIOFETCH", logo[-1])
+        self.assertIn("-o          o-", logo[0])
+        self.assertIn("MMMMMMMMMMMMMMMM", "\n".join(logo))
+
+    def test_arch_logo_selected(self):
+        logo = viofetch.select_logo({"OS": "Arch Linux"})
+        self.assertIn("ooo/", "\n".join(logo))
+        self.assertTrue(logo[0].strip().startswith("-"))
 
     def test_linux_distribution_logos(self):
         cases = {
-            "CachyOS": "CACHYOS",
-            "Arch Linux": "ARCH",
-            "Ubuntu 26.04": "UBUNTU",
-            "Debian GNU/Linux": "DEBIAN",
-            "Fedora Linux": "FEDORA",
-            "Microsoft Windows 11": "WINDOWS",
-            "macOS": "macOS",
+            "CachyOS": "----------------",
+            "Ubuntu 26.04": "looooooooc",
+            "Debian GNU/Linux": "met$$$$",
+            "Fedora Linux": "cccccccc",
+            "Manjaro Linux": "████████",
+            "Microsoft Windows 11": "t3Z3z",
+            "macOS": "xNMM",
+            "Linux": "#####",
         }
-        for os_name, expected in cases.items():
+        for os_name, marker in cases.items():
             with self.subTest(os_name=os_name):
-                self.assertIn(expected, viofetch.select_logo({"OS": os_name})[-1])
+                self.assertIn(marker, "\n".join(viofetch.select_logo({"OS": os_name})))
 
+    def test_manual_logo_override(self):
+        logo = viofetch.select_logo({"OS": "Android 17 / Termux"}, requested="arch")
+        self.assertIn("ooo/", "\n".join(logo))
+
+    def test_proot_distro_overrides_termux_os_label(self):
+        with patch.object(
+            viofetch.platform,
+            "freedesktop_os_release",
+            return_value={"ID": "arch", "PRETTY_NAME": "Arch Linux"},
+        ):
+            self.assertEqual(viofetch.os_description(termux=True), "Arch Linux")
+
+    def test_android_os_label_fallback(self):
+        properties = {
+            "ro.build.version.release": "17",
+            "ro.build.version.sdk": "37",
+        }
+        with (
+            patch.object(viofetch.platform, "freedesktop_os_release", side_effect=OSError),
+            patch.object(viofetch, "getprop", side_effect=lambda key: properties.get(key)),
+        ):
+            self.assertEqual(viofetch.os_description(termux=True), "Android 17 (API 37) / Termux")
+
+    def test_custom_logo_cli(self):
+        result = self.run_cli("--logo", "arch", "--color", "never")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("ooo/", result.stdout)
     def test_unknown_os_uses_viofetch_mark(self):
         self.assertEqual(
             viofetch.select_logo({"OS": "Unknown OS"}),
@@ -95,7 +129,7 @@ class CliTests(unittest.TestCase):
     def test_version(self):
         result = self.run_cli("--version")
         self.assertEqual(result.returncode, 0)
-        self.assertIn(viofetch.__version__, result.stdout)
+        self.assertIn("0.2.0", result.stdout)
 
     def test_json_output(self):
         result = self.run_cli("--json")

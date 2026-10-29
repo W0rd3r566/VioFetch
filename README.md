@@ -1,25 +1,31 @@
 # VioFetch
 
-**A minimal, violet-styled system fetch for Termux.** VioFetch prints a compact system summary in the terminal, inspired by the system-summary format popularized by Neofetch. It is an independent implementation and does not reuse Neofetch source code.
+**A minimal, violet-styled system fetch for Termux.** VioFetch prints a compact system summary in the terminal, inspired by the system-summary format popularized by Neofetch. Its detection and renderer are independent; selected ASCII logos are adapted from Fastfetch under its MIT license (see [third-party notices](THIRD_PARTY_NOTICES.md)).
 
 **Current target:** Termux on Android. Other Linux distributions are a secondary best-effort fallback in this initial preview. Native Windows/macOS support is not claimed yet.
 
-## Preview
+## Preview (viofetch --logo arch)
 
 ```text
-       \  |  /       test@localhost
-        \ | /        ──────────────
-       .-"""-.         OS           Android 17 / Termux
-      /  o o  \       Host         Google Pixel
-     |    ^    |       Kernel       6.x.x-android
-     |         |       Uptime       2h 14m
-      \_______/       Shell        bash
-     /|  | |  |\       Terminal     Termux
-    /_|__|_|__|_\     CPU          Tensor G4
-       /_/ \_\        Architecture aarch64
-       ANDROID          Memory       3.2 GiB / 7.5 GiB
-                        Storage      18.0 GiB free / 110.0 GiB
-                        Python       3.x
+                  -`                    test@localhost
+                 .o+`                   --------------
+                `ooo/                   OS           Android 17 / Termux
+               `+oooo:                  Host         Google Pixel 9a
+              `+oooooo:                 Kernel       6.1.172-android14
+              -+oooooo+:                Uptime       8 hours, 35 mins
+            `/:-:++oooo+:               Shell        bash 5.3.9
+           `/++++/+++++++:              Terminal     Termux
+          `/++++++++++++++:             CPU          Tensor G4
+         `/+++ooooooooooooo/`           Architecture aarch64
+        ./ooosssso++osssssso+`          Memory       4.5 GiB / 7.4 GiB
+       .oossssso-````/ossssss+`         Storage      104.8 GiB free / 228.6 GiB
+      -osssssso.      :ssssssso.        Python       3.13.13
+     :osssssss/        osssso+++.       
+    /ossssssss/        +ssssooo/-       
+  `/ossssso+/:-        -:/+osssso+-     
+ `+sso+:-`                 `.-/+oso:    
+`++:.                           `-/+/   
+.`                                 `/   
 ```
 
 The values above are illustrative, not a real device report. The battery line appears only when the optional Termux:API command is available.
@@ -53,7 +59,9 @@ The API app must be installed separately, and its installation source/signature 
 ## Usage
 
 ```bash
-python viofetch.py             # normal output
+python viofetch.py             # auto-detect OS and logo
+python viofetch.py --logo arch # force the Arch Linux logo
+python viofetch.py --logo android
 python viofetch.py --plain     # no logo or colors
 python viofetch.py --no-logo   # information without the logo
 python viofetch.py --color never
@@ -68,6 +76,7 @@ python viofetch.py --help
 ## What it detects today
 
 - Android release and API level on Termux
+- Linux userspace distribution inside proot, when its /etc/os-release is available
 - Device manufacturer/model
 - Kernel and architecture
 - CPU/SoC label when Android exposes one
@@ -95,7 +104,7 @@ python -m unittest discover -s tests -v
 - [ ] Test on more Termux devices and Android versions
 - [x] Add ASCII logos for Android and major operating systems/distributions
 - [ ] Add configurable fields and custom logo selection
-- [ ] Improve Linux distribution detection
+- [x] Improve Linux distribution detection inside Termux/proot
 - [ ] Add and test native Windows support
 - [ ] Add packaging and installation helpers
 
@@ -109,7 +118,7 @@ MIT. See [LICENSE](LICENSE).
 
 **VioFetch** — минималистичная системная сводка для Termux с фиолетово-серым оформлением. Показывает основные сведения об Android-устройстве прямо в терминале. Проект вдохновлён форматом Neofetch, но реализован независимо, без копирования его исходного кода.
 
-**Первая цель — Termux на Android.** Логотип выбирается автоматически: доступны варианты для Android, CachyOS, Arch Linux, Ubuntu, Debian, Fedora, Manjaro, Windows, macOS и общего Linux. На других Linux-системах возможен базовый вывод, а полноценная нативная поддержка Windows/macOS пока не заявляется.
+**Первая цель — Termux на Android.** Логотипы взяты из коллекции Fastfetch с соблюдением MIT-лицензии: доступны Android, CachyOS, Arch Linux, Ubuntu, Debian, Fedora, Manjaro, Windows, macOS и общий Linux. Внутри proot-дистрибутива VioFetch учитывает его /etc/os-release, а не только Android-хост. На других Linux-системах возможен базовый вывод, а полноценная нативная поддержка Windows/macOS пока не заявляется.
 
 ### Запуск
 
@@ -123,6 +132,7 @@ python viofetch.py
 
 ### Параметры
 
+- `--logo auto|android|arch|cachyos|ubuntu|debian|fedora|manjaro|windows|macos|linux` — выбор логотипа
 - `--plain` — вывод без логотипа и цветов
 - `--no-logo` — убрать логотип
 - `--color auto|always|never` — режим цветов

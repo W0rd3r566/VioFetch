@@ -20,7 +20,7 @@ import sys
 from pathlib import Path
 from typing import Mapping, Sequence
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 # VioFetch's small violet/gray palette. Colors are used only in terminal output.
 VIOLET = "\033[38;5;141m"
@@ -38,125 +38,230 @@ LOGO = (
     "    VIOFETCH",
 )
 
-# ASCII logos are intentionally monochrome so VioFetch keeps its violet theme.
-# More distribution-specific variants can be added here without changing render().
+# Selected ASCII logo artwork is adapted from Fastfetch's MIT-licensed logo collection.
+# See THIRD_PARTY_NOTICES.md for upstream paths and copyright/license information.
 LOGOS: dict[str, tuple[str, ...]] = {
     "android": (
-        "       \\  |  /",
-        "        \\ | /",
-        "       .-\"\"\"-.",
-        "      /  o o  \\",
-        "     |    ^    |",
-        "     |         |",
-        "      \\_______/",
-        "     /|  | |  |\\",
-        "    /_|__|_|__|_\\",
-        "       /_/ \\_\\",
-        "       ANDROID",
-    ),
-    "cachyos": (
-        "       /\\",
-        "      /  \\",
-        "     / /\\ \\",
-        "    / /  \\ \\",
-        "   /_/____\\_\\",
-        "      CACHYOS",
+        "         -o          o-",
+        "          +hydNNNNdyh+",
+        "        +mMMMMMMMMMMMMm+",
+        "      `dMMm:NMMMMMMN:mMMd`",
+        "      hMMMMMMMMMMMMMMMMMMh",
+        "  ..  yyyyyyyyyyyyyyyyyyyy  ..",
+        ".mMMm`MMMMMMMMMMMMMMMMMMMM`mMMm.",
+        ":MMMM-MMMMMMMMMMMMMMMMMMMM-MMMM:",
+        ":MMMM-MMMMMMMMMMMMMMMMMMMM-MMMM:",
+        ":MMMM-MMMMMMMMMMMMMMMMMMMM-MMMM:",
+        ":MMMM-MMMMMMMMMMMMMMMMMMMM-MMMM:",
+        "-MMMM-MMMMMMMMMMMMMMMMMMMM-MMMM-",
+        " +yy+ MMMMMMMMMMMMMMMMMMMM +yy+",
+        "      mMMMMMMMMMMMMMMMMMMm",
+        "      `/++MMMMh++hMMMM++/`",
+        "          MMMMo  oMMMM",
+        "          MMMMo  oMMMM",
+        "          oNMm-  -mMNs"
     ),
     "arch": (
-        "       /\\",
-        "      /  \\",
-        "     / /\\ \\",
-        "    / ____ \\",
-        "   /_/    \\_\\",
-        "       ARCH",
+        "                  -`",
+        "                 .o+`",
+        "                `ooo/",
+        "               `+oooo:",
+        "              `+oooooo:",
+        "              -+oooooo+:",
+        "            `/:-:++oooo+:",
+        "           `/++++/+++++++:",
+        "          `/++++++++++++++:",
+        "         `/+++ooooooooooooo/`",
+        "        ./ooosssso++osssssso+`",
+        "       .oossssso-````/ossssss+`",
+        "      -osssssso.      :ssssssso.",
+        "     :osssssss/        osssso+++.",
+        "    /ossssssss/        +ssssooo/-",
+        "  `/ossssso+/:-        -:/+osssso+-",
+        " `+sso+:-`                 `.-/+oso:",
+        "`++:.                           `-/+/",
+        ".`                                 `/"
+    ),
+    "cachyos": (
+        "           .-------------------------:",
+        "          .+=========================.",
+        "         :++===++==================-       :++-",
+        "        :*++====+++++=============-        .==:",
+        "       -*+++=====+***++==========:",
+        "      =*++++========------------:",
+        "     =*+++++=====-                     ...",
+        "   .+*+++++=-===:                    .=+++=:",
+        "  :++++=====-==:                     -*****+",
+        " :++========-=.                      .=+**+.",
+        ".+==========-.                          .",
+        " :+++++++====-                                .--==-.",
+        "  :++==========.                             :+++++++:",
+        "   .-===========.                            =*****+*+",
+        "    .-===========:                           .+*****+:",
+        "      -=======++++:::::::::::::::::::::::::-:  .---:",
+        "       :======++++====+++******************=.",
+        "        :=====+++==========++++++++++++++*-",
+        "         .====++==============++++++++++*-",
+        "          .===+==================+++++++:",
+        "           .-=======================+++:",
+        "             .........................."
     ),
     "ubuntu": (
-        "       .-\"\"\"-.",
-        "     .'  .-.  '.",
-        "    /   (   )   \\",
-        "   |  .-     -.  |",
-        "    \\  '.___.'  /",
-        "     '.       .'",
-        "       '-...-'",
-        "       UBUNTU",
+        "                             ....",
+        "              .',:clooo:  .:looooo:.",
+        "           .;looooooooc  .oooooooooo'",
+        "        .;looooool:,''.  :ooooooooooc",
+        "       ;looool;.         'oooooooooo,",
+        "      ;clool'             .cooooooc.  ,,",
+        "         ...                ......  .:oo,",
+        "  .;clol:,.                        .loooo'",
+        " :ooooooooo,                        'ooool",
+        "'ooooooooooo.                        loooo.",
+        "'ooooooooool                         coooo.",
+        " ,loooooooc.                        .loooo.",
+        "   .,;;;'.                          ;ooooc",
+        "       ...                         ,ooool.",
+        "    .cooooc.              ..',,'.  .cooo.",
+        "      ;ooooo:.           ;oooooooc.  :l.",
+        "       .coooooc,..      coooooooooo.",
+        "         .:ooooooolc:. .ooooooooooo'",
+        "           .':loooooo;  ,oooooooooc",
+        "               ..';::c'  .;loooo:'"
     ),
     "debian": (
-        "       .----.",
-        "      /  .-. \\",
-        "     |  /   \\ |",
-        "      \\ \\_.-' /",
-        "       '----'",
-        "       DEBIAN",
+        "        _,met$$$$$$$$$$gg.",
+        "     ,g$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$P.",
+        "   ,g$$$$P\"\"       \"\"\"Y$$$$.\".",
+        "  ,$$$$P'              `$$$$$$.",
+        "',$$$$P       ,ggs.     `$$$$b:",
+        "`d$$$$'     ,$P\"'   .    $$$$$$",
+        " $$$$P      d$'     ,    $$$$P",
+        " $$$$:      $$$.   -    ,d$$$$'",
+        " $$$$;      Y$b._   _,d$P'",
+        " Y$$$$.    `.`\"Y$$$$$$$$P\"'",
+        " `$$$$b      \"-.__",
+        "  `Y$$$$b",
+        "   `Y$$$$.",
+        "     `$$$$b.",
+        "       `Y$$$$b.",
+        "         `\"Y$$b._",
+        "             `\"\"\"\""
     ),
     "fedora": (
-        "       ______",
-        "      / ____/",
-        "     / /__",
-        "    / ___/",
-        "   / /",
-        "  /_/",
-        "  FEDORA",
+        "             .',;::::;,'.",
+        "         .';:cccccccccccc:;,.",
+        "      .;cccccccccccccccccccccc;.",
+        "    .:cccccccccccccccccccccccccc:.",
+        "  .;ccccccccccccc;.:dddl:.;ccccccc;.",
+        " .:ccccccccccccc;OWMKOOXMWd;ccccccc:.",
+        ".:ccccccccccccc;KMMc;cc;xMMc;ccccccc:.",
+        ",cccccccccccccc;MMM.;cc;;WW:;cccccccc,",
+        ":cccccccccccccc;MMM.;cccccccccccccccc:",
+        ":ccccccc;oxOOOo;MMM000k.;cccccccccccc:",
+        "cccccc;0MMKxdd:;MMMkddc.;cccccccccccc;",
+        "ccccc;XMO';cccc;MMM.;cccccccccccccccc'",
+        "ccccc;MMo;ccccc;MMW.;ccccccccccccccc;",
+        "ccccc;0MNc.ccc.xMMd;ccccccccccccccc;",
+        "cccccc;dNMWXXXWM0:;cccccccccccccc:,",
+        "cccccccc;.:odl:.;cccccccccccccc:,.",
+        "ccccccccccccccccccccccccccccc:'.",
+        ":ccccccccccccccccccccccc:;,..",
+        " ':cccccccccccccccc::;,."
     ),
     "manjaro": (
-        "     |\\\\   | |",
-        "     | \\\\  | |",
-        "     |  \\\\ | |",
-        "     | |\\\\\\| |",
-        "     | | \\\\  |",
-        "     | |  \\\\ |",
-        "     MANJARO",
+        "██████████████████  ████████",
+        "██████████████████  ████████",
+        "██████████████████  ████████",
+        "██████████████████  ████████",
+        "████████            ████████",
+        "████████  ████████  ████████",
+        "████████  ████████  ████████",
+        "████████  ████████  ████████",
+        "████████  ████████  ████████",
+        "████████  ████████  ████████",
+        "████████  ████████  ████████",
+        "████████  ████████  ████████",
+        "████████  ████████  ████████",
+        "████████  ████████  ████████"
     ),
     "windows": (
-        "      .------.",
-        "      |\\  |  |",
-        "      | \\ |  |",
-        "      |-- +--|",
-        "      |   \\  |",
-        "      '------'",
-        "      WINDOWS",
+        "        ,.=:!!t3Z3z.,",
+        "       :tt:::tt333EE3",
+        "       Et:::ztt33EEEL @Ee.,      ..,",
+        "      ;tt:::tt333EE7 ;EEEEEEttttt33#",
+        "     :Et:::zt333EEQ. $EEEEEttttt33QL",
+        "     it::::tt333EEF @EEEEEEttttt33F",
+        "    ;3=*^```\"*4EEV :EEEEEEttttt33@.",
+        "    ,.=::::!t=., ` @EEEEEEtttz33QF",
+        "   ;::::::::zt33)   \"4EEEtttji3P*",
+        "  :t::::::::tt33.:Z3z..  `` ,..g.",
+        "  i::::::::zt33F AEEEtttt::::ztF",
+        " ;:::::::::t33V ;EEEttttt::::t3",
+        " E::::::::zt33L @EEEtttt::::z3F",
+        "{3=*^```\"*4E3) ;EEEtttt:::::tZ`",
+        "             ` :EEEEtttt::::z7",
+        "                 \"VEzjt:;;z>*`"
     ),
     "macos": (
-        "        .--.",
-        "       /.-. '----------.",
-        "       \\'-' .--\"--\"--\"-",
-        "        '--'",
-        "        macOS",
+        "                     ..'",
+        "                 ,xNMM.",
+        "               .OMMMMo",
+        "               lMM\"",
+        "     .;loddo:.  .olloddol;.",
+        "   cKMMMMMMMMMMNWMMMMMMMMMM0:",
+        " .KMMMMMMMMMMMMMMMMMMMMMMMWd.",
+        " XMMMMMMMMMMMMMMMMMMMMMMMX.",
+        ";MMMMMMMMMMMMMMMMMMMMMMMM:",
+        ":MMMMMMMMMMMMMMMMMMMMMMMM:",
+        ".MMMMMMMMMMMMMMMMMMMMMMMMX.",
+        " kMMMMMMMMMMMMMMMMMMMMMMMMWd.",
+        " 'XMMMMMMMMMMMMMMMMMMMMMMMMMMk",
+        "  'XMMMMMMMMMMMMMMMMMMMMMMMMK.",
+        "    kMMMMMMMMMMMMMMMMMMMMMMd",
+        "     ;KMMMMMMMWXXWMMMMMMMk.",
+        "       \"cooc*\"    \"*coo'\""
     ),
     "linux": (
-        "       .--.",
-        "      |o_o |",
-        "      |:_/ |",
-        "     //   \\ \\",
-        "    (|     | )",
-        "   /'\\_   _/\\",
-        "   \\___)=(___/",
-        "        LINUX",
+        "        #####",
+        "       #######",
+        "       ##O#O##",
+        "       #######",
+        "     ###########",
+        "    #############",
+        "   ###############",
+        "   ################",
+        "  #################",
+        "#####################",
+        "#####################",
+        "  #################"
     ),
 }
 
 
-def select_logo(info: Mapping[str, str]) -> tuple[str, ...]:
-    """Select an ASCII logo from the detected operating system name."""
-    os_name = info.get("OS", "").casefold()
+def select_logo(info: Mapping[str, str], requested: str = "auto") -> tuple[str, ...]:
+    """Select an upstream ASCII logo automatically or by explicit name."""
+    if requested in LOGOS:
+        return LOGOS[requested]
+    if requested != "auto":
+        return LOGO
 
-    # Order matters: CachyOS is Arch-based, so match it before generic Arch.
+    os_name = info.get("OS", "").casefold()
     choices = (
-        ("android", ("android", "termux")),
         ("cachyos", ("cachyos",)),
         ("manjaro", ("manjaro",)),
         ("ubuntu", ("ubuntu",)),
         ("debian", ("debian",)),
         ("fedora", ("fedora",)),
-        ("arch", ("arch linux", "endeavouros", "endeavour os")),
+        ("arch", ("arch linux", "archlinux", "endeavouros", "endeavour os")),
         ("windows", ("windows",)),
         ("macos", ("macos", "mac os", "darwin")),
+        ("android", ("android", "termux")),
         ("linux", ("linux", "opensuse", "open suse", "alpine")),
     )
     for logo_name, markers in choices:
         if any(marker in os_name for marker in markers):
             return LOGOS[logo_name]
     return LOGO
-
 
 
 def run_command(args: Sequence[str], timeout: float = 1.2) -> str | None:
@@ -287,7 +392,18 @@ def format_battery() -> str | None:
 
 
 def os_description(termux: bool) -> str:
-    """Get an OS name, preferring the Android properties on Termux."""
+    """Prefer a Linux userspace distro (including proot) over its Android host."""
+    try:
+        data = platform.freedesktop_os_release()
+        name = data.get("PRETTY_NAME") or data.get("NAME")
+        os_id = data.get("ID", "").casefold()
+        # In Termux, Android is the host unless we are inside a distro such as
+        # Arch Linux installed through proot-distro, which has its own os-release.
+        if name and (not termux or os_id not in {"android", "termux"}):
+            return name
+    except (AttributeError, OSError):
+        pass
+
     if termux:
         release = getprop("ro.build.version.release")
         sdk = getprop("ro.build.version.sdk")
@@ -296,13 +412,6 @@ def os_description(termux: bool) -> str:
             name += f" (API {sdk})"
         return name + " / Termux"
 
-    try:
-        data = platform.freedesktop_os_release()
-        name = data.get("PRETTY_NAME") or data.get("NAME")
-        if name:
-            return name
-    except (AttributeError, OSError):
-        pass
     return f"{platform.system() or 'Unknown'} {platform.release()}".strip()
 
 
@@ -404,8 +513,8 @@ def colorize(text: str, color: str, enabled: bool) -> str:
     return f"{color}{text}{RESET}" if enabled else text
 
 
-def render(info: Mapping[str, str], *, no_logo: bool = False, color: bool = True) -> str:
-    """Render Neofetch-style logo and system fields with a restrained palette."""
+def render(info: Mapping[str, str], *, no_logo: bool = False, color: bool = True, logo_name: str = "auto") -> str:
+    """Render a selected ASCII logo and aligned system fields."""
     user = info.get("User", "user@host")
     fields = [(key, value) for key, value in info.items() if key != "User"]
     header = colorize(user, BOLD + LAVENDER, color)
@@ -418,18 +527,18 @@ def render(info: Mapping[str, str], *, no_logo: bool = False, color: bool = True
     if no_logo:
         return "\n".join(lines)
 
-    logo = select_logo(info)
-    logo_lines = [colorize(line, VIOLET, color) for line in logo]
-    width = max(len(line) for line in logo)
+    logo_art = select_logo(info, requested=logo_name)
+    logo_lines = [colorize(line, VIOLET, color) for line in logo_art]
+    width = max((len(line) for line in logo_art), default=0)
     height = max(len(logo_lines), len(lines))
     combined: list[str] = []
     for index in range(height):
-        logo = logo_lines[index] if index < len(logo_lines) else ""
-        line = lines[index] if index < len(lines) else ""
-        # ANSI escape sequences have already been applied to the display copy,
-        # so pad using the original logo width instead of len(logo).
-        padding = " " * max(2, width - (len(logo[index]) if index < len(logo) else 0) + 3)
-        combined.append(logo + padding + line)
+        raw_logo_line = logo_art[index] if index < len(logo_art) else ""
+        display_logo_line = logo_lines[index] if index < len(logo_lines) else ""
+        info_line = lines[index] if index < len(lines) else ""
+        # Pad from the uncolored text, so ANSI escape codes cannot affect alignment.
+        padding = " " * max(2, width - len(raw_logo_line) + 3)
+        combined.append(display_logo_line + padding + info_line)
     return "\n".join(combined)
 
 
@@ -439,6 +548,13 @@ def build_parser() -> argparse.ArgumentParser:
         description="Minimal violet system information for Termux and Linux.",
     )
     parser.add_argument("--version", action="version", version=f"VioFetch {__version__}")
+    parser.add_argument(
+        "--logo",
+        choices=("auto", *LOGOS.keys()),
+        default="auto",
+        metavar="NAME",
+        help="choose an ASCII logo (default: auto-detect)",
+    )
     parser.add_argument("--no-logo", action="store_true", help="show information without the VioFetch logo")
     parser.add_argument("--plain", action="store_true", help="plain output without logo or colors")
     parser.add_argument("--json", action="store_true", help="print machine-readable JSON")
@@ -466,7 +582,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     else:
         use_color = sys.stdout.isatty() and "NO_COLOR" not in os.environ
 
-    output = render(info, no_logo=args.no_logo or args.plain, color=use_color)
+    output = render(info, no_logo=args.no_logo or args.plain, color=use_color, logo_name=args.logo)
     print(output)
     return 0
 
