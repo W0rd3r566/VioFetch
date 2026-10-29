@@ -7,19 +7,19 @@
 ## Preview
 
 ```text
-      /\       test@localhost
-     /  \      ──────────────
-    / /\ \     OS           Android 17 / Termux
-   / /  \ \    Host         Google Pixel
-  /_/____\_\   Kernel       6.x.x-android
-    VIOFETCH   Uptime       2h 14m
-               Shell        bash
-               Terminal     Termux
-               CPU          ARM processor
-               Architecture aarch64
-               Memory       3.2 GiB / 7.5 GiB
-               Storage      18.0 GiB free / 110.0 GiB
-               Python       3.x
+       \  |  /       test@localhost
+        \ | /        ──────────────
+       .-"""-.         OS           Android 17 / Termux
+      /  o o  \       Host         Google Pixel
+     |    ^    |       Kernel       6.x.x-android
+     |         |       Uptime       2h 14m
+      \_______/       Shell        bash
+     /|  | |  |\       Terminal     Termux
+    /_|__|_|__|_\     CPU          Tensor G4
+       /_/ \_\        Architecture aarch64
+       ANDROID          Memory       3.2 GiB / 7.5 GiB
+                        Storage      18.0 GiB free / 110.0 GiB
+                        Python       3.x
 ```
 
 The values above are illustrative, not a real device report. The battery line appears only when the optional Termux:API command is available.
@@ -89,11 +89,12 @@ python -m unittest discover -s tests -v
 ## Roadmap
 
 - [x] Termux-first prototype with no third-party Python dependencies
-- [x] Violet/gray terminal styling and custom ASCII mark
+- [x] Violet/gray terminal styling and OS-specific ASCII logos
 - [x] JSON output and no-color modes
 - [x] Basic automated tests and GitHub Actions
 - [ ] Test on more Termux devices and Android versions
-- [ ] Add configurable fields and logo selection
+- [x] Add ASCII logos for Android and major operating systems/distributions
+- [ ] Add configurable fields and custom logo selection
 - [ ] Improve Linux distribution detection
 - [ ] Add and test native Windows support
 - [ ] Add packaging and installation helpers
@@ -108,7 +109,7 @@ MIT. See [LICENSE](LICENSE).
 
 **VioFetch** — минималистичная системная сводка для Termux с фиолетово-серым оформлением. Показывает основные сведения об Android-устройстве прямо в терминале. Проект вдохновлён форматом Neofetch, но реализован независимо, без копирования его исходного кода.
 
-**Первая цель — Termux на Android.** На других Linux-системах возможен базовый вывод, но полноценная поддержка Windows/macOS пока не заявляется.
+**Первая цель — Termux на Android.** Логотип выбирается автоматически: доступны варианты для Android, CachyOS, Arch Linux, Ubuntu, Debian, Fedora, Manjaro, Windows, macOS и общего Linux. На других Linux-системах возможен базовый вывод, а полноценная нативная поддержка Windows/macOS пока не заявляется.
 
 ### Запуск
 
