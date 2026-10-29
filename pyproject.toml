@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "viofetch"
+version = "0.1.0"
+description = "A minimal violet-styled system fetch, starting with Termux"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [{ name = "VioFetch contributors" }]
+keywords = ["termux", "android", "neofetch", "system-information", "terminal"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: Android",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Topic :: System :: Systems Administration",
+  "Topic :: Utilities",
+]
+
+[project.scripts]
+viofetch = "viofetch:main"
+
+[tool.setuptools]
+py-modules = ["viofetch"]
