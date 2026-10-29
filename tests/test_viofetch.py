@@ -104,10 +104,6 @@ class FormatTests(unittest.TestCase):
         ):
             self.assertEqual(viofetch.os_description(termux=True), "Android 17 (API 37) / Termux")
 
-    def test_custom_logo_cli(self):
-        result = self.run_cli("--logo", "arch", "--color", "never")
-        self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn("ooo/", result.stdout)
     def test_unknown_os_uses_viofetch_mark(self):
         self.assertEqual(
             viofetch.select_logo({"OS": "Unknown OS"}),
@@ -143,6 +139,11 @@ class CliTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertNotIn("\033[", result.stdout)
         self.assertIn("OS", result.stdout)
+
+    def test_custom_logo_cli(self):
+        result = self.run_cli("--logo", "arch", "--color", "never")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("ooo/", result.stdout)
 
 
 if __name__ == "__main__":
