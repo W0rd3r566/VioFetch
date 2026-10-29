@@ -55,6 +55,31 @@ class FormatTests(unittest.TestCase):
         self.assertIn("OS", output)
         self.assertNotIn("\033[", output)
 
+    def test_android_logo_selected(self):
+        logo = viofetch.select_logo({"OS": "Android 17 (API 37) / Termux"})
+        self.assertIn("ANDROID", logo[-1])
+        self.assertNotIn("VIOFETCH", logo[-1])
+
+    def test_linux_distribution_logos(self):
+        cases = {
+            "CachyOS": "CACHYOS",
+            "Arch Linux": "ARCH",
+            "Ubuntu 26.04": "UBUNTU",
+            "Debian GNU/Linux": "DEBIAN",
+            "Fedora Linux": "FEDORA",
+            "Microsoft Windows 11": "WINDOWS",
+            "macOS": "macOS",
+        }
+        for os_name, expected in cases.items():
+            with self.subTest(os_name=os_name):
+                self.assertIn(expected, viofetch.select_logo({"OS": os_name})[-1])
+
+    def test_unknown_os_uses_viofetch_mark(self):
+        self.assertEqual(
+            viofetch.select_logo({"OS": "Unknown OS"}),
+            viofetch.LOGO,
+        )
+
 
 class CliTests(unittest.TestCase):
     def run_cli(self, *args):
